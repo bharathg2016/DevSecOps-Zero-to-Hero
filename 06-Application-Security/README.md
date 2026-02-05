@@ -250,20 +250,46 @@ Application runs at http://localhost:5000
 
 ## 🕷️ Step 6: DAST with OWASP ZAP
 
+Run the Juice Shop Application
+
 ```bash
-docker run -u zap -p 8080:8080 owasp/zap2docker-stable zap.sh
+docker run -d \
+  --name juice-shop \
+  -p 3000:3000 \
+  bkimminich/juice-shop
 ```
 
-Scan target:
+Open in browser:
+
 ```
-http://localhost:5000
+localhost:3000
 ```
 
-### Expected Findings
-- SQL Injection
-- Command Injection
-- Missing security headers
-- Debug mode exposure
+Scan target by running ZAP from cli
+
+```
+docker run --rm \                                                                                      ✔  8509  15:33:58
+  -v "$(pwd):/zap/wrk" \
+  -t ghcr.io/zaproxy/zaproxy:stable \
+  zap-baseline.py \
+  -t http://host.docker.internal:3000 \
+  -r zap-report.html
+```
+
+Scan target by running ZAP from UI
+
+```
+docker run -it \                                                                             SIGINT(2) ↵  8509  15:36:05
+  -p 8080:8080 \
+  ghcr.io/zaproxy/zaproxy:stable \
+  zap-webswing.sh
+```
+
+Open Zap UI:
+
+```
+http://localhost:8080/zap
+```
 
 ---
 
